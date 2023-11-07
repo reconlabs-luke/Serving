@@ -1,0 +1,9 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: custom-model
+spec:
+  predictor:
+    containers:
+      - name: kserve-container
+        image: 129231402580.dkr.ecr.ap-northeast-1.amazonaws.com/serving:prod
