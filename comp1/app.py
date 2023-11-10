@@ -48,4 +48,4 @@ class AlexNetModel(Model):
 
 if __name__ == "__main__":
     model = AlexNetModel("custom-model")
-    ModelServer(workers=1, http_port=8012).start([model])
+    ModelServer(workers=1).start([model])
