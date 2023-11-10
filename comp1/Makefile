@@ -25,4 +25,5 @@ deploy-k8s:
 	export TAG=${TAG}; \
 	export COMPONENT=${COMPONENT_NAME}; \
 	envsubst < ${SERVICE_FILENAME}.template > ${SERVICE_FILENAME}
+	kubectl delete isvc ${COMPONENT}
 	kubectl apply -f ${SERVICE_FILENAME}
