@@ -1,9 +1,7 @@
 FROM python:3.9-slim
 
-ARG APP_HOME=/home/kserve
+ARG APP_HOME=/usr/src
 RUN apt-get update && apt-get install -y build-essential gcc
-RUN useradd kserve -m -u 1000 -d ${APP_HOME}
-USER 1000
 
 WORKDIR ${APP_HOME}
 COPY . ${APP_HOME}
