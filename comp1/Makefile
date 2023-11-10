@@ -9,7 +9,7 @@ SERVICE_FILENAME ?= inferenceService.yaml
 
 docker-build:
 	aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin ${REPOSITORY} && \
-	pack build --builder=heroku/buildpacks:20 ${IMG}:${TAG}
+	docker build -t ${IMG}:${TAG}
 
 local-test: docker-build
 	docker run -p 8080:8080 -t ${IMG}:${TAG}
