@@ -1,8 +1,10 @@
 FROM python:3.9-slim
 
+ARG APP_HOME=/home/kserve
 RUN apt-get update && apt-get install -y build-essential gcc
+RUN useradd kserve -m -u 1000 -d ${APP_HOME}
+USER 1000
 
-ARG APP_HOME=/app
 WORKDIR ${APP_HOME}
 COPY . ${APP_HOME}
 RUN pip install --upgrade pip && pip install pipenv && pipenv requirements > requirements.txt
