@@ -18,6 +18,7 @@ docker-push: docker-build
 	docker tag ${IMG}:${TAG} ${REPOSITORY}/${IMG}:${TAG}
 	docker push ${REPOSITORY}/${IMG}:${TAG}
 	docker rmi ${REPOSITORY}/${IMG}:${TAG}
+	docker rmi ${IMG}:${TAG}
 
 deploy-k8s:
 	export REPOSITORY=${REPOSITORY}; \
@@ -25,5 +26,11 @@ deploy-k8s:
 	export TAG=${TAG}; \
 	export COMPONENT=${COMPONENT_NAME}; \
 	envsubst < ${SERVICE_FILENAME}.template > ${SERVICE_FILENAME}
-	kubectl delete isvc ${COMPONENT}
+	ISVC=kubectl delete isvc ${COMPONENT}; \
+	if [[ -z ISVC ]]; \
+	then; \
+		echo Not Exist; \
+	else \
+		kubectl delete isvc ${COMPONENT}; \
+	fi
 	kubectl apply -f ${SERVICE_FILENAME}

@@ -18,6 +18,7 @@ docker-push: docker-build
 	docker tag ${IMG}:${TAG} ${REPOSITORY}/${IMG}:${TAG}
 	docker push ${REPOSITORY}/${IMG}:${TAG}
 	docker rmi ${REPOSITORY}/${IMG}:${TAG}
+	docker rmi ${IMG}:${TAG}
 
 deploy-k8s:
 	export REPOSITORY=${REPOSITORY}; \
