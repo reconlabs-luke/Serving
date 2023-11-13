@@ -1,0 +1,13 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: InferenceGraph
+metadata:
+  name: model-chainer
+  namespace: kubeflow-user-example-com
+spec:
+  nodes:
+    root:
+      routerType: Sequence
+      steps:
+        - serviceName: comp1
+        - serviceName: comp2
+          data: $response

@@ -1,10 +1,5 @@
-from torchvision import models, transforms
 from typing import Dict
-from PIL import Image
 from kserve import Model, ModelServer
-import torch
-import base64
-import io
 import json
 
 
