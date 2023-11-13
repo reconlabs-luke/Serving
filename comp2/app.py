@@ -30,5 +30,5 @@ class MyModel(Model):
 
 
 if __name__ == "__main__":
-    model = MyModel("custom-model")
+    model = MyModel("comp2")
     ModelServer(workers=1).start([model])
