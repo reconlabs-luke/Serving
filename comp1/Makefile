@@ -6,6 +6,7 @@ COMPONENT_NAME ?= comp1
 TAG ?= ${COMPONENT_NAME}-${VERSION}
 
 SERVICE_FILENAME ?= inferenceService.yaml
+NAMESPACE ?= kubeflow-user-example-com
 
 docker-build:
 	aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin ${REPOSITORY} && \
@@ -25,12 +26,12 @@ deploy-k8s:
 	export IMG=${IMG}; \
 	export TAG=${TAG}; \
 	export COMPONENT=${COMPONENT_NAME}; \
+	export NAMESPACE=${NAMESPACE}; \
 	envsubst < ${SERVICE_FILENAME}.template > ${SERVICE_FILENAME}
-	ISVC=kubectl delete isvc ${COMPONENT}; \
-	if [[ -z ISVC ]]; \
-	then; \
+	ISVC=$(kubectl get isvc -n ${NAMESPACE} | grep ${COMPONENT}); \
+	if [ -z ${ISVC} ]; then \
 		echo Not Exist; \
 	else \
 		kubectl delete isvc ${COMPONENT}; \
-	fi
+	fi;
 	kubectl apply -f ${SERVICE_FILENAME}

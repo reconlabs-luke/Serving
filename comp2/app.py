@@ -25,10 +25,10 @@ class MyModel(Model):
         if isinstance(payload, str):
             payload = json.loads(payload)
             print("jsonify : ", payload, " ", type(payload))
-        x = payload["result"]["prediction"]
-        y = payload["data"]["number"]
+        x = 10
+        y = payload["number"]
         result = x + y
-        return {"prediction": result}
+        return {"result": result}
 
 
 if __name__ == "__main__":

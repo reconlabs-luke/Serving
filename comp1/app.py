@@ -26,7 +26,7 @@ class MyModel(Model):
             payload = json.loads(payload)
             print("jsonify : ", payload, " ", type(payload))
         result = payload["data"]["number"]
-        return {"prediction": result}
+        return {"number": result}
 
 
 if __name__ == "__main__":
