@@ -2,7 +2,7 @@ VERSION ?= $(shell git describe --tags --always --dirty)
 
 REPOSITORY ?= 129231402580.dkr.ecr.ap-northeast-1.amazonaws.com
 IMG ?= serving
-COMPONENT_NAME ?= comp1
+COMPONENT_NAME ?= comp2
 TAG ?= ${COMPONENT_NAME}-${VERSION}
 
 SERVICE_FILENAME ?= inferenceService.yaml
