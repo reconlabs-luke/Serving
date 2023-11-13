@@ -19,10 +19,12 @@ class MyModel(Model):
 
     def predict(self, payload: Dict, headers: Dict[str, str] = None) -> Dict:
         print("payload : ", payload, " ", type(payload))
-        payload = payload.decode("utf-8")
-        print("decoded : ", payload, " ", type(payload))
-        payload = json.loads(payload)
-        print("jsonify : ", payload, " ", type(payload))
+        if isinstance(payload, bytes):
+            payload = payload.decode("utf-8")
+            print("decoded : ", payload, " ", type(payload))
+        if isinstance(payload, str):
+            payload = json.loads(payload)
+            print("jsonify : ", payload, " ", type(payload))
         x = payload["result"]["prediction"]
         y = payload["data"]["number"]
         result = x + y
