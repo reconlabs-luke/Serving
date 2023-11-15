@@ -1,0 +1,112 @@
+# Default values for vole.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+revisionHistoryLimit: 1
+
+namespace: "${NAMESPACE}"
+
+labels:
+  app: "${NAMESPACE}-${APP_NAME}"
+
+selectorLabels:
+  app: "${NAMESPACE}-${APP_NAME}"
+
+image:
+  repository: "ghcr.io/mlflow/mlflow"
+  # IfNotPresent, Always
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v2.1.1"
+  command:
+    - /bin/sh
+    - -c
+    - |
+      pip install --upgrade pip && pip install psycopg2-binary && \
+      mlflow server \
+      --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${NAMESPACE}-postgresql-service.${NAMESPACE}.svc.cluster.local:80/${POSTGRES_DB} \
+      --host 0.0.0.0
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "${APP_NAME}"
+
+env:
+  - name: POSTGRES_USER
+    value: "${POSTGRES_USER}"
+  - name: POSTGRES_PASSWORD
+    value: "${POSTGRES_PASSWORD}"
+  - name: POSTGRES_DB
+    value: "${POSTGRES_DB}"
+  - name: NAMESPACE
+    value: "${NAMESPACE}"
+  - name: APP_NAME
+    value: "${APP_NAME}"
+
+service:
+  protocol: TCP
+  port: 80
+  targetPort: "${SERVICE_PORT}"
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_token"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+    # ssl 설정
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    cert-manager.io/cluster-issuer: letsencrypt
+  tls:
+    - secretName: arbeon-com-tls
+      hosts:
+      - "${CERT_DNS}"
+  rules:
+    - host: "${INGRESS_HOST}"
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: "${NAMESPACE}-${APP_NAME}-service"
+              port:
+                number: 80
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  node: worker
+
+volumes:
+  - name: ${NAMESPACE}-${APP_NAME}
+    persistentVolumeClaim:
+      claimName: ${NAMESPACE}-${APP_NAME}
+
+volumeMounts:
+  - mountPath: /mlartifacts
+    name: ${NAMESPACE}-${APP_NAME}
+
+selectorPVC:
+  matchExpressions:
+    - key: type
+      operator: In
+      values:
+        - mlflow-artifacts
