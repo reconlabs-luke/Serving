@@ -1,29 +1,22 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: kserve-test
   namespace: istio-system
+  name: istio-ingress
   annotations:
-    alb.ingress.kubernetes.io/load-balancer-name: kserve-test
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: model-serving
+    alb.ingress.kubernetes.io/group.name: model-serving-group
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: instance
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-northeast-1:129231402580:certificate/9e7ddfc1-0494-4eb9-89c5-1f7ef0ea938f"
 spec:
-  ingressClassName: alb
-  tls:
-  - hosts:
-    - "kubeflow.rlabsub.com"
-    secretName: rlabsub-com-tls
   rules:
-  - host: "kubeflow.rlabsub.com"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: istio-ingressgateway
-            port:
-              number: 80
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: istio-ingressgateway
+              port:
+                number: 80

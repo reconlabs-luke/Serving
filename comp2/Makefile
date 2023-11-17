@@ -6,7 +6,7 @@ COMPONENT_NAME ?= comp2
 TAG ?= ${COMPONENT_NAME}-${VERSION}
 
 SERVICE_FILENAME ?= inferenceService.yaml
-NAMESPACE ?= kubeflow-user-example-com
+NAMESPACE ?= kserve-test
 
 docker-build:
 	aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin ${REPOSITORY} && \

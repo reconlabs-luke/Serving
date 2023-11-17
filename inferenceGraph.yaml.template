@@ -1,8 +1,8 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: InferenceGraph
 metadata:
-  name: sequence-test
-  namespace: kserve-test
+  name: ${GRAPH_NAME}
+  namespace: ${NAMESPACE}
 spec:
   nodes:
     root:
