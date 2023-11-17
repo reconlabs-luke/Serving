@@ -9,6 +9,9 @@ metadata:
     alb.ingress.kubernetes.io/group.name: model-serving-group
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-northeast-1:129231402580:certificate/9e7ddfc1-0494-4eb9-89c5-1f7ef0ea938f"
 spec:
   rules:
     - http:
