@@ -29,30 +29,29 @@ class MyModel(Model):
         if isinstance(payload, str):
             payload = json.loads(payload)
             print("jsonify : ", payload, " ", type(payload))
-        if isinstance(payload, dict) and "Body" in payload.keys():
-            if "error" in payload:
-                raise Exception("의도적인 에러")
-
-            self.receipt_handle = payload["ReceiptHandle"]
-            kwargs = {
-                "QueueUrl": os.getenv(
-                    "QUEUE_URL",
-                    "https://sqs.ap-northeast-1.amazonaws.com/129231402580/test-q",
-                ),
-                "ReceiptHandle": self.receipt_handle,
-                "VisibilityTimeout": 20,
-            }
-            self.increase_visibilty_time_timer = threading.Timer(
-                interval=9,
-                function=self.sqs_client.change_message_visibility,
-                kwargs=kwargs,
-            )
-            self.increase_visibilty_time_timer.start()
-
-            payload = payload["Body"]
-            print("Consumd body : ", payload, " ", type(payload))
 
         try:
+            if isinstance(payload, dict) and "Body" in payload.keys():
+                self.receipt_handle = payload["ReceiptHandle"]
+                kwargs = {
+                    "QueueUrl": os.getenv(
+                        "QUEUE_URL",
+                        "https://sqs.ap-northeast-1.amazonaws.com/129231402580/test-q",
+                    ),
+                    "ReceiptHandle": self.receipt_handle,
+                    "VisibilityTimeout": 20,
+                }
+                self.increase_visibilty_time_timer = threading.Timer(
+                    interval=9,
+                    function=self.sqs_client.change_message_visibility,
+                    kwargs=kwargs,
+                )
+                self.increase_visibilty_time_timer.start()
+                payload = payload["Body"]
+                print("Consumd body : ", payload, " ", type(payload))
+                if "error" in payload:
+                    raise Exception("의도적인 에러")
+
             if isinstance(payload, dict) and "number" in payload.keys():
                 x = 10
                 y = payload["number"]
