@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y build-essential gcc
 
 WORKDIR ${APP_HOME}
 COPY . ${APP_HOME}
-RUN pip install --upgrade pip && pip install pipenv && pipenv requirements > requirements.txt
+# RUN pip install --upgrade pip && pip install pipenv && pipenv requirements > requirements.txt
 RUN pip install --no-cache-dir -r ${APP_HOME}/requirements.txt
 
 # Run the web service on container startup. Here we use the gunicorn
